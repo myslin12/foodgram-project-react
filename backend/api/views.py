@@ -6,15 +6,15 @@ from .models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
-from .pagination import CustomPagination
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (IngredientSerializer, RecipeReadSerializer,
-                          RecipeShortSerializer, RecipeWriteSerializer,
+from rest_framework.pagination import PageNumberPagination
+from .permissions import IsAdminOrReadOnly
+from .serializers import (IngredientSerializer,
+                          RecipeShortSerializer,
                           TagSerializer)
 from django.contrib.auth import get_user_model
 
@@ -38,14 +38,10 @@ class TagViewSet(ReadOnlyModelViewSet):
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    pagination_class = CustomPagination
+    # permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-
-    def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
-            return RecipeReadSerializer
-        return RecipeWriteSerializer
 
     @action(
         detail=True,
