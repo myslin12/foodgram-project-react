@@ -6,15 +6,15 @@ from .models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from rest_framework.pagination import PageNumberPagination
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (IngredientSerializer, RecipeReadSerializer,
-                          RecipeShortSerializer, RecipeWriteSerializer,
+from .permissions import IsAdminOrReadOnly
+from .serializers import (IngredientSerializer,
+                          RecipeShortSerializer,
                           TagSerializer)
 from django.contrib.auth import get_user_model
 
@@ -45,15 +45,7 @@ class RecipeViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = RecipeReadSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
-
-    # #Занести наверх!!!
-    # def get_serializer_class(self):
-    #     if self.request.method in SAFE_METHODS:
-    #         return RecipeReadSerializer
-    #     return RecipeWriteSerializer
-
+    
     @action(
         detail=True,
         methods=['post', 'delete'],
