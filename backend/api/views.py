@@ -12,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from rest_framework.pagination import PageNumberPagination
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeShortSerializer,
                           TagSerializer)
@@ -28,25 +28,27 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
+    pagination_class = None
 
 
 class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
-    # permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = RecipeReadSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
     # #Занести наверх!!!
     # def get_serializer_class(self):
@@ -65,6 +67,11 @@ class RecipeViewSet(ModelViewSet):
         else:
             return self.delete_from(Favourite, request.user, pk)
 
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk):
         if request.method == 'POST':
             return self.add_to(ShoppingCart, request.user, pk)

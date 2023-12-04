@@ -23,3 +23,8 @@ class RecipeAdmin(admin.ModelAdmin):
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(IngredientInRecipe)
+class IngredientInRecipeAdmin(admin.ModelAdmin):
+    pass
