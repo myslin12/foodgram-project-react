@@ -13,7 +13,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .filters import IngredientFilter, RecipeFilter
 from rest_framework.pagination import PageNumberPagination
 from .permissions import IsAdminOrReadOnly
-from .serializers import (IngredientSerializer,
+from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeShortSerializer,
                           TagSerializer)
 from django.contrib.auth import get_user_model
@@ -42,6 +42,17 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    serializer_class = RecipeReadSerializer
+
+    # def perform_create(self, serializer):
+    #     serializer.save(author=self.request.user)
+
+    # #Занести наверх!!!
+    # def get_serializer_class(self):
+    #     if self.request.method in SAFE_METHODS:
+    #         return RecipeReadSerializer
+    #     return RecipeWriteSerializer
 
     @action(
         detail=True,
