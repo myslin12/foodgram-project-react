@@ -1,6 +1,5 @@
 import csv
 
-from constants import CSV_PATH
 from django.core.management.base import BaseCommand
 from api.models import Ingredient
 
@@ -9,7 +8,7 @@ class Command(BaseCommand):
     help = "Заполнение БД ингредиентами"
 
     def handle(self, *args, **kwargs):
-        with open(CSV_PATH, encoding='utf-8') as file:
+        with open('/app/data/ingredients.csv', encoding='utf-8') as file:
             csvreader = csv.reader(file)
             next(csvreader)
             for row in csvreader:
