@@ -1,8 +1,8 @@
-from django.db import models
-from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-User = get_user_model()
+from django.db.models import UniqueConstraint
+from django.db import models
+from colorfield.fields import ColorField
+from users.models import User
 
 
 class Ingredient(models.Model):
@@ -14,6 +14,12 @@ class Ingredient(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         ordering = ['name']
+        constraints = [
+            UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='ingredient_name_measurement_unit'
+            )
+        ]
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -22,7 +28,7 @@ class Ingredient(models.Model):
 class Tag(models.Model):
 
     name = models.CharField('Название', max_length=200)
-    color = models.CharField('Цветовой код', unique=True, max_length=10)
+    color = ColorField('Цветовой код', unique=True, max_length=10)
     slug = models.SlugField('Уникальный слаг', unique=True, max_length=200)
 
     class Meta:

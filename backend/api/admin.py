@@ -1,8 +1,6 @@
-from django.contrib import admin
-
 # Register your models here.
-from api.models import Recipe, Ingredient, IngredientInRecipe, Tag
-
+from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
+from django.contrib import admin
 
 admin.register(Recipe)
 admin.register(Ingredient)
@@ -27,4 +25,4 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientInRecipe)
 class IngredientInRecipeAdmin(admin.ModelAdmin):
-    pass
+    model = IngredientInRecipe

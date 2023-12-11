@@ -1,18 +1,16 @@
-from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
-from .models import Ingredient, IngredientInRecipe, Recipe, Tag
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import IntegerField, SerializerMethodField
 from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
-from users.models import Subscribe
+from users.models import Subscribe, User
 
-User = get_user_model()
+from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -193,11 +191,10 @@ class RecipeWriteSerializer(ModelSerializer):
         tags = value
         if not tags:
             raise ValidationError({'tags': 'Нужно выбрать хотя бы один тег!'})
-        tags_list = []
-        for tag in tags:
-            if tag in tags_list:
-                raise ValidationError({'tags': 'Теги не могут повторяться!'})
-            tags_list.append(tag)
+        tags_list = [tag for tag in tags]
+        if len(tags_list) != len(set(tags_list)):
+            raise ValidationError({'tags': 'Теги не могут повторяться!'})
+        tags_list.append(tags)
         return value
 
     @transaction.atomic

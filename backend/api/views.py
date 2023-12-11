@@ -2,24 +2,65 @@
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
-from rest_framework.pagination import PageNumberPagination
+from recipes.models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
+                     ShoppingCart, Tag)
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
-                          RecipeShortSerializer,
-                          TagSerializer)
-from django.contrib.auth import get_user_model
+                          RecipeShortSerializer, TagSerializer,
+                          CustomUserSerializer, SubscribeSerializer)
+from djoser.views import UserViewSet
+
+from users.models import Subscribe, User
 
 
-User = get_user_model()
+class CustomUserViewSet(UserViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    pagination_class = PageNumberPagination
+
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated]
+    )
+    def subscribe(self, request, id):
+        user = request.user
+        author = get_object_or_404(User, pk=id)
+        serializer = SubscribeSerializer(author,
+                                         data=request.data,
+                                         context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        Subscribe.objects.create(user=user, author=author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @subscribe.mapping.delete
+    def delete_subscribe(self, request, id):
+        user = request.user
+        author = get_object_or_404(User, id=id)
+        subscription = Subscribe.objects.filter(user=user, author=author)
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
+        permission_classes=[IsAuthenticated]
+    )
+    def subscriptions(self, request):
+        user = request.user
+        queryset = User.objects.filter(subscribing__user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = SubscribeSerializer(pages,
+                                         many=True,
+                                         context={'request': request})
+        return self.get_paginated_response(serializer.data)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -49,12 +90,6 @@ class RecipeViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-    # #Занести наверх!!!
-    # def get_serializer_class(self):
-    #     if self.request.method in SAFE_METHODS:
-    #         return RecipeReadSerializer
-    #     return RecipeWriteSerializer
 
     @action(
         detail=True,
