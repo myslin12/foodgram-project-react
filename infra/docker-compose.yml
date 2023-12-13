@@ -28,8 +28,6 @@ services:
     image: nginx:1.19.3
     env_file:
       - .env
-    # Для локальной разработки 80:80, чтобы сайт был доступен
-    # без указания порта localhost
     ports:
       - 80:80
     volumes:
