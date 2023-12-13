@@ -11,7 +11,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from recipes.models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Tag)
+                            ShoppingCart, Tag)
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeShortSerializer, TagSerializer,
