@@ -141,9 +141,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+# Лучше абсолютный путь использовать.
+# Явное лучше неявного, чтобы удобнее было пути писать в nginx.
+
+# Место на в контейнере backend, где будет лежать статика, когда
+# ее соберем с помощью ./manage.py collectstatic
+STATIC_ROOT = '/app/static_django/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+# Лучше абсолютный путь использовать.
+# Явное лучше неявного, чтобы удобнее было пути писать в nginx.
+# MEDIA_ROOT = 'app/media/
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
