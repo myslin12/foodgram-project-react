@@ -1,26 +1,23 @@
 # Register your models here.
-from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 from django.contrib import admin
-
-admin.register(Recipe)
-admin.register(Ingredient)
-admin.register(IngredientInRecipe)
-admin.register(Tag)
+from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'measurement_unit')
+    list_filter = ('name',)
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'author', 'count_favorites')
+    list_filter = ('author', 'name', 'tags')
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'slug', 'color')
 
 
 @admin.register(IngredientInRecipe)
