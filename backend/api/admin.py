@@ -1,4 +1,3 @@
-# Register your models here.
 from django.contrib import admin
 from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 
@@ -11,8 +10,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'count_favorites')
-    list_filter = ('author', 'name', 'tags')
+    pass
 
 
 @admin.register(Tag)
