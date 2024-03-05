@@ -12,7 +12,6 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from recipes.models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscribe, User
-
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, IngredientSerializer,
@@ -35,7 +34,7 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
         serializer = SubscribeSerializer(author,
                                          data=request.data,
-                                         context={"request": request})
+                                         context={'request': request})
         serializer.is_valid(raise_exception=True)
         Subscribe.objects.create(user=user, author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

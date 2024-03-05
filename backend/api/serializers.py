@@ -13,6 +13,9 @@ from rest_framework.serializers import ModelSerializer
 from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 from users.models import User
 
+MIN = 1
+MAX = 32000
+
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
@@ -142,9 +145,7 @@ class RecipeReadSerializer(ModelSerializer):
 
 class IngredientInRecipeWriteSerializer(ModelSerializer):
     id = IntegerField(write_only=True)
-    amount = IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(32000)]
-    )
+    amount = IntegerField(min_value=MIN, max_value=MAX)
 
     class Meta:
         model = IngredientInRecipe
@@ -157,9 +158,7 @@ class RecipeWriteSerializer(ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientInRecipeWriteSerializer(many=True)
     image = Base64ImageField()
-    cooking_time = IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(32000)]
-    )
+    cooking_time = IntegerField(min_value=MIN, max_value=MAX)
 
     class Meta:
         model = Recipe
@@ -185,7 +184,7 @@ class RecipeWriteSerializer(ModelSerializer):
             ingredient = get_object_or_404(Ingredient, id=item['id'])
             if ingredient in ingredients_set:
                 raise ValidationError({
-                    'ingredients': 'Ингридиенты не могут повторяться!'
+                    'ingredients': 'Ингредиенты не могут повторяться!'
                 })
             ingredients_set.append(ingredient)
         return value
