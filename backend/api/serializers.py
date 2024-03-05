@@ -11,7 +11,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer
 
 from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
-from users.models import Subscribe, User
+from users.models import User
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
