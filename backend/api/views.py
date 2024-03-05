@@ -2,14 +2,15 @@ from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
+from recipes.models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
@@ -43,7 +44,7 @@ class CustomUserViewSet(UserViewSet):
     def delete_subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
-        subscription = Subscribe.objects.filter(user=user, author=author)
+        subscription = user.subscriber.filter(author=author)
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
