@@ -16,7 +16,8 @@ from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeShortSerializer,
-                          SubscribeSerializer, TagSerializer)
+                          SubscribeSerializer, TagSerializer,
+                          RecipeWriteSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -85,6 +86,11 @@ class RecipeViewSet(ModelViewSet):
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
     serializer_class = RecipeReadSerializer
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return RecipeReadSerializer
+        return RecipeWriteSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

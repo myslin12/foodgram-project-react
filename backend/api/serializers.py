@@ -178,7 +178,7 @@ class RecipeWriteSerializer(ModelSerializer):
             raise ValidationError({
                 'ingredients': 'Нужен хотя бы один ингредиент!'
             })
-        ingredients_set = set()
+        ingredients_set = []
         for item in ingredients:
             ingredient = get_object_or_404(Ingredient, id=item['id'])
             if ingredient in ingredients_set:
