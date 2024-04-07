@@ -126,4 +126,4 @@ docker-compose -f docker-compose-local.yml up -d
 
 ### Автор backend'а:
 
-Мыслин Владимир (c) 2023
+Мыслин Владимир (c) 2024
